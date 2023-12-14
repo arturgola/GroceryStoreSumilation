@@ -55,4 +55,12 @@ public class Controller {
     public void reset() {
         engine = new MyEngine(this);
     }
+
+    public double getDelay() {
+        return engine.getDelay();
+    }
+
+    public void setDelay(double delay) {
+        engine.setDelay(delay);
+    }
 }

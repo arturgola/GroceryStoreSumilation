@@ -78,12 +78,16 @@ public class View extends JFrame {
 
     private JLabel simulationCurrentTime, totalServiceAvgTime;
 
+    private JLabel speedLabel;
+
 
     private Controller controller;
 
     public void setController(Controller controller) {
         this.controller = controller;
         setStartButtonListener();
+        setSpeedUpButtonListener();
+        setSlowDownButtonListener();
     }
 
     public View(Controller controller) {
@@ -102,7 +106,7 @@ public class View extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         simulationTimeTextField = new JTextField();
-        simulationTimeTextField.setPreferredSize(new Dimension(150, 25)); // Adjusted width
+        simulationTimeTextField.setPreferredSize(new Dimension(100, 25)); // Adjusted width
         registerNumericKeyListener(simulationTimeTextField);
 
 
@@ -124,8 +128,8 @@ public class View extends JFrame {
 
         startButton.setEnabled(false);
         pauseButton.setEnabled(false);
-        speedUpButton.setEnabled(false);
-        slowDownButton.setEnabled(false);
+        speedUpButton.setEnabled(true);
+        slowDownButton.setEnabled(true);
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
 
@@ -172,6 +176,11 @@ public class View extends JFrame {
         mainPanel.add(distributionPanel);
         mainPanel.add(buttonsPanel);
 
+        speedLabel = new JLabel("Speed: 1x");
+        speedLabel.setPreferredSize(new Dimension(150, 25));
+        mainPanel.add(speedLabel);
+
+
         // Add the main panel to the layout
         add(mainPanel, BorderLayout.CENTER);
 
@@ -213,7 +222,7 @@ public class View extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Button clicked on EDT? " + SwingUtilities.isEventDispatchThread());
-                controller.reset();
+                //controller.reset();
 
                 // Notify the controller to start the simulation
                 controller.setEngineSimulationTime(Double.parseDouble(simulationTimeTextField.getText()));
@@ -249,12 +258,41 @@ public class View extends JFrame {
         });
     }
 
-    public void finishSimulation(int servicedCustomers) {
+    private void setSpeedUpButtonListener() {
+        speedUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Increase the delay factor (speed up the simulation)
+                controller.setDelay(Math.min((controller.getDelay() + 0.5), 2));
+                updateSpeedLabel();
+            }
+        });
+    }
 
+    private void setSlowDownButtonListener() {
+        slowDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Decrease the delay factor (slow down the simulation)
+                controller.setDelay(Math.max((controller.getDelay() - 0.5), 0.5));
+                updateSpeedLabel();
+            }
+        });
+    }
+
+    private void updateSpeedLabel() {
+        // Update the speed label with the current delay factor
+        speedLabel.setText("Speed: " + controller.getDelay() + "x");
+    }
+
+
+    public void finishSimulation(int servicedCustomers) {
+        controller.reset();
+        updateSpeedLabel();
         startButton.setEnabled(true);
         pauseButton.setEnabled(false);
-        speedUpButton.setEnabled(false);
-        slowDownButton.setEnabled(false);
+        speedUpButton.setEnabled(true);
+        slowDownButton.setEnabled(true);
     }
 
     public void updateTime(double time) {

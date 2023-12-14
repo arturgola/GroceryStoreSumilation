@@ -9,6 +9,8 @@ public abstract class Engine {
     private double simulationTime = 0;
     protected EventList eventList;
 
+    protected double delay = 1;
+
     public Engine() {
         eventList = new EventList();
         // Service Points are created in the subclass
@@ -19,6 +21,14 @@ public abstract class Engine {
         Customer.resetI();
         Customer.resetServiceTimeSum();
         this.simulationTime = simulationTime;
+    }
+
+    public void setDelay(double delay) {
+        this.delay = delay;
+    }
+
+    public double getDelay() {
+        return delay;
     }
 
     public void run() {
@@ -35,7 +45,11 @@ public abstract class Engine {
             tryCEvents();
             System.out.println("");
 
-
+            try {
+                Thread.sleep((int) (10/delay));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         results();
