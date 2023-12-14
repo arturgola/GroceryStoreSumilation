@@ -11,6 +11,8 @@ public abstract class Engine {
 
     protected double delay = 1;
 
+    protected boolean isPaused = false;
+
     public Engine() {
         eventList = new EventList();
         // Service Points are created in the subclass
@@ -31,10 +33,18 @@ public abstract class Engine {
         return delay;
     }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void togglePause() {
+        isPaused = !isPaused;
+    }
+
     public void run() {
         initialize();
 
-        while (simulate()) {
+        while (simulate() && !isPaused) {
             System.out.printf("\n%sA-phase:%s time is %.2f\n", RED, WHITE, currentTime());
             Clock.getInstance().setClock(currentTime());
 
@@ -49,6 +59,14 @@ public abstract class Engine {
                 Thread.sleep((int) (10/delay));
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+
+            while (isPaused) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

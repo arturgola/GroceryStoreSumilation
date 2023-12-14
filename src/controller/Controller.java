@@ -63,4 +63,8 @@ public class Controller {
     public void setDelay(double delay) {
         engine.setDelay(delay);
     }
+
+    public void togglePause() {
+        engine.togglePause();
+    }
 }

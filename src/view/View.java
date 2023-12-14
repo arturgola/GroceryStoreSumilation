@@ -88,6 +88,7 @@ public class View extends JFrame {
         setStartButtonListener();
         setSpeedUpButtonListener();
         setSlowDownButtonListener();
+        setPauseButtonListener();
     }
 
     public View(Controller controller) {
@@ -285,6 +286,14 @@ public class View extends JFrame {
         speedLabel.setText("Speed: " + controller.getDelay() + "x");
     }
 
+    private void setPauseButtonListener() {
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.togglePause();
+            }
+        });
+    }
 
     public void finishSimulation(int servicedCustomers) {
         controller.reset();
