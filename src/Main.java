@@ -1,5 +1,5 @@
-import simu.Controller;
-import simu.View;
+import controller.Controller;
+import view.View;
 import simu.model.MyEngine;
 
 import javax.swing.*;

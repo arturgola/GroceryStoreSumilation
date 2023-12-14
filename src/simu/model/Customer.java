@@ -15,7 +15,7 @@ public class Customer {
         id = i++;
 
         arrivalTime = Clock.getInstance().getClock();
-        System.out.printf(" New customer #%d arrived at %.2f", id, arrivalTime);
+        System.out.printf("New customer #%d arrived at %.2f. ", id, arrivalTime);
     }
 
     public double getArrivalTime() {
@@ -34,11 +34,19 @@ public class Customer {
         return id;
     }
 
+    public static void resetI() {
+        Customer.i = 1;
+    }
+
+    public static void resetServiceTimeSum() {
+        Customer.serviceTimeSum = 0;
+    }
+
     public void reportResults() {
         serviceTimeSum += (removalTime - arrivalTime);
         double meanServiceTime = serviceTimeSum / id;   // id is the number of customers serviced
 
-        System.out.printf(" %sCustomer #%d has been serviced. simu.model.Customer arrived: %.2f removed: %.2f stayed: %.2f mean %.2f%s",
+        System.out.printf("%sCustomer #%d has been serviced. Customer arrived: %.2f, removed: %.2f, stayed: %.2f, mean %.2f%s.",
                 YELLOW, id, arrivalTime, removalTime, (removalTime-arrivalTime), meanServiceTime, WHITE);
     }
 }

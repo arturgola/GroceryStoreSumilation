@@ -1,32 +1,33 @@
 package simu.model;
 
 import eduni.distributions.*;
-import simu.Controller;
+import controller.Controller;
 import simu.framework.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
-/* Simulate a queueing system with one service point and one queue.
- * The service time is normally distributed with mean 10.
- * The interarrival time is exponentially distributed with mean 15.
- * The simulation runs until the number of arrivals exceeds 1000.
- * The program prints the average waiting time.
- */
 public class MyEngine extends Engine {
     private ArrivalProcess arrivalProcess;
     private ServicePoint[] servicePoint;
     private Controller controller;
 
 
-   public MyEngine(Controller controller) {
+    public MyEngine(Controller controller) {
         super();
         this.controller = controller;
 
         servicePoint = new ServicePoint[4];     // just an array of one element
-        servicePoint[0] = new ServicePoint("S1", new Normal(10, 6), eventList, EventType.DEP1);
-        servicePoint[1] = new ServicePoint("S2", new Normal(10, 10), eventList, EventType.DEP2);
-       servicePoint[2] = new ServicePoint("S3", new Normal(10, 6), eventList, EventType.DEP3);
-       servicePoint[3] = new ServicePoint("S4", new Normal(10, 10), eventList, EventType.DEP4);
-        arrivalProcess = new ArrivalProcess(new Negexp(15), eventList, EventType.ARR);
+        servicePoint[0] = new ServicePoint("S1", new Normal(10, 3), eventList, EventType.DEP1);
+        servicePoint[1] = new ServicePoint("S2", new Normal(14, 7), eventList, EventType.DEP2);
+        servicePoint[2] = new ServicePoint("S3", new Normal(12, 6), eventList, EventType.DEP3);
+        servicePoint[3] = new ServicePoint("S4", new Normal(9, 4), eventList, EventType.DEP4);
+        arrivalProcess = new ArrivalProcess(new Negexp(2), eventList, EventType.ARR);
     }
 
     protected void initialize() {
@@ -35,12 +36,12 @@ public class MyEngine extends Engine {
     }
 
     protected void runEvent(Event e) {
-       Customer a;
+        Customer a;
 
-       controller.updateTime(e.getTime());
+        controller.updateTime(e.getTime());
 
 
-       switch ((EventType) e.getType()) {
+       /*switch ((EventType) e.getType()) {
             case ARR:
                 servicePoint[0].addToQueue(new Customer());
                 arrivalProcess.generateNextEvent();
@@ -66,7 +67,8 @@ public class MyEngine extends Engine {
                 a.setRemovalTime(Clock.getInstance().getClock());
                 controller.updateServicedCustomers(servicePoint[3].getCustomerServiced());
 
-                double totalServiceAvgTime = servicePoint[0].getMeanServiceTime() + servicePoint[1].getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
+                double totalServiceAvgTime = servicePoint[0].getMeanServiceTime() + servicePoint[1]
+                .getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
 
 
                 double[] sampleData = {
@@ -82,7 +84,59 @@ public class MyEngine extends Engine {
                 controller.updateTotalServiceAvgTime(totalServiceAvgTime);
                 a.reportResults();
                 break;
+        }*/
+
+        switch ((EventType) e.getType()) {
+            case ARR:
+                minQueueServicePoint().addToQueue(new Customer());
+
+                arrivalProcess.generateNextEvent();
+                break;
+
+            case DEP1:
+                a = servicePoint[0].removeFromQueue();
+                a.setRemovalTime(Clock.getInstance().getClock());
+                a.reportResults();
+                updateView();
+                break;
+
+            case DEP2:
+                a = servicePoint[1].removeFromQueue();
+                a.setRemovalTime(Clock.getInstance().getClock());
+                a.reportResults();
+                updateView();
+                break;
+
+            case DEP3:
+                a = servicePoint[2].removeFromQueue();
+                a.setRemovalTime(Clock.getInstance().getClock());
+                a.reportResults();
+                updateView();
+                break;
+
+            case DEP4:
+                a = servicePoint[3].removeFromQueue();
+                a.setRemovalTime(Clock.getInstance().getClock());
+                a.reportResults();
+                updateView();
+                break;
         }
+
+//                double totalServiceAvgTime = servicePoint[0].getMeanServiceTime() + servicePoint[1]
+//                .getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
+
+
+        /*double[] sampleData = new double[] {
+                servicePoint[0].getMeanServiceTime(),
+                servicePoint[1].getMeanServiceTime(),
+                servicePoint[2].getMeanServiceTime(),
+                servicePoint[3].getMeanServiceTime()
+        };
+        controller.pushDataToPoint(sampleData);*/
+
+
+//                controller.updateTotalServiceAvgTime(totalServiceAvgTime);
+
     }
 
     protected void tryCEvents() {
@@ -93,24 +147,90 @@ public class MyEngine extends Engine {
         }
     }
 
+    private ServicePoint minQueueServicePoint() {
+        List<ServicePoint> servicePointList = Arrays.asList(servicePoint);
+        return Collections.min(servicePointList);
+    }
 
+    private int getTotalCustomerServiced() {
+        int total = 0;
+        for (ServicePoint sp : servicePoint) {
+            total += sp.getCustomerServiced();
+        }
+        return total;
+    }
 
-    public void setController(Controller controller){
-       this.controller = controller;
+    private double getTotalAvgServiceTime() {
+        double total = 0;
+        for (ServicePoint sp : servicePoint) {
+            total += sp.getMeanServiceTime();
+        }
+        return total / servicePoint.length;
+    }
+
+    private void updateView() {
+        double[] sampleData = new double[]{
+                servicePoint[0].getMeanServiceTime(),
+                servicePoint[1].getMeanServiceTime(),
+                servicePoint[2].getMeanServiceTime(),
+                servicePoint[3].getMeanServiceTime()
+        };
+        controller.pushDataToPoint(sampleData);
+
+        controller.updateTotalServiceAvgTime(getTotalAvgServiceTime());
+
+        controller.updateServicedCustomers(getTotalCustomerServiced());
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 
     protected void results() {
-//        System.out.printf("\nSimulation ended at %.2f\n", Clock.getInstance().getClock());
-        controller.finishSimulation(servicePoint[3].getCustomerServiced());
-//        System.out.println("Total customers serviced: " + servicePoint[3].getCustomerServiced());
-//        System.out.printf("Average service time for S1: %.2f\n", servicePoint[0].getMeanServiceTime());
-//        System.out.printf("Average service time for S2: %.2f\n", servicePoint[1].getMeanServiceTime());
-//        System.out.printf("Average service time for S3: %.2f\n", servicePoint[2].getMeanServiceTime());
-//        System.out.printf("Average service time for S4: %.2f\n", servicePoint[3].getMeanServiceTime());
+        updateView();
+        controller.finishSimulation(getTotalCustomerServiced());
 
-//        double totalServiceTime = servicePoint[0].getMeanServiceTime() + servicePoint[1].getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
 
-//        System.out.printf("Average service time for all service points: %.2f\n", totalServiceTime);
+        System.out.printf("\nSimulation ended at %.2f\n", Clock.getInstance().getClock());
+        System.out.println("Total customers serviced: " + getTotalCustomerServiced());
 
+        for (int i = 0; i < servicePoint.length; i++) {
+            System.out.printf("Average service time for %s: %.2f, served: %d\n", servicePoint[i].getName(),
+                    servicePoint[i].getMeanServiceTime(),
+                    servicePoint[i].getCustomerServiced());
+        }
+
+        System.out.printf("Average service time for all service points: %.2f\n", getTotalAvgServiceTime());
+
+        writeResults();
+    }
+
+    private void writeResults() {
+        String fileName = generateFileName();
+        try (FileWriter writer = new FileWriter(fileName)) {
+            // header
+            writer.append("Simulation Time,Total Customers Serviced,Avg Service Time S1,Avg Service Time S2,Avg " +
+                    "Service Time S3,Avg Service Time S4,Avg Service Time All\n");
+
+            // data
+            writer.append(String.format("%.2f,%d,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                    Clock.getInstance().getClock(),
+                    getTotalCustomerServiced(),
+                    servicePoint[0].getMeanServiceTime(),
+                    servicePoint[1].getMeanServiceTime(),
+                    servicePoint[2].getMeanServiceTime(),
+                    servicePoint[3].getMeanServiceTime(),
+                    getTotalAvgServiceTime()));
+
+            System.out.printf("Results written to %s%n", fileName);
+        } catch (IOException e) {
+            System.err.println("Error writing results to CSV file: " + e.getMessage());
+        }
+    }
+
+    private String generateFileName() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
+        String dateTime = dateFormat.format(new Date());
+        return "SimLog_" + dateTime + ".csv";
     }
 }
