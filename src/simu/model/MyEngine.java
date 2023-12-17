@@ -32,7 +32,7 @@ public class MyEngine extends Engine {
 
     /**
      * Constructor for new MyEngine instance that utilizes a Controller object.
-     * @param controller
+     * @param controller controller
      */
     public MyEngine(Controller controller) {
         super();

@@ -109,6 +109,10 @@ public class ServicePoint implements Comparable<ServicePoint> {
         return name;
     }
 
+    public LinkedList<Customer> getQueue() {
+        return queue;
+    }
+
     @Override
     public int compareTo(ServicePoint otherServicePoint) {
         return Integer.compare(this.queue.size(), otherServicePoint.queue.size());

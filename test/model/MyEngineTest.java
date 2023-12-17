@@ -32,27 +32,27 @@ class MyEngineTest {
     void testRunEvent_ARR() {
         Event arrivalEvent = new Event(EventType.ARR, 10.0);
         myEngine.runEvent(arrivalEvent);
-        assertNotNull(myEngine.servicePoint[0].getQueue().peek());
+        assertNotNull(myEngine.getServicePoint()[0].getQueue().peek());
     }
 
     @Test
     void testRunEvent_DEP1() {
         Customer customer = new Customer();
-        myEngine.servicePoint[0].addToQueue(customer);
+        myEngine.getServicePoint()[0].addToQueue(customer);
         Event dep1Event = new Event(EventType.DEP1, 10.0);
         myEngine.runEvent(dep1Event);
-        assertNull(myEngine.servicePoint[0].getQueue().peek());
-        assertEquals(customer, myEngine.servicePoint[1].getQueue().peek());
+        assertNull(myEngine.getServicePoint()[0].getQueue().peek());
+        assertEquals(customer, myEngine.getServicePoint()[1].getQueue().peek());
     }
 
     @Test
     void testTryCEvents() {
         Customer customer = new Customer();
-        myEngine.servicePoint[0].addToQueue(customer);
+        myEngine.getServicePoint()[0].addToQueue(customer);
         myEngine.tryCEvents();
-        assertEquals(1, myEngine.servicePoint[0].getQueue().size());
-        myEngine.servicePoint[0].beginService();
+        assertEquals(1, myEngine.getServicePoint()[0].getQueue().size());
+        myEngine.getServicePoint()[0].beginService();
         myEngine.tryCEvents();
-        assertEquals(0, myEngine.servicePoint[0].getQueue().size());
+        assertEquals(0, myEngine.getServicePoint()[0].getQueue().size());
     }
 }

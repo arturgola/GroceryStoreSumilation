@@ -28,7 +28,7 @@ public class View extends JFrame {
 
     private JPanel mainPanel;
 
-    private JPanel distributionPanel;
+    JPanel distributionPanel;
 
 
     private static double[][] arrayListTo2DArray(ArrayList<double[]> arrayList) {
@@ -67,14 +67,18 @@ public class View extends JFrame {
         distributionPanel.repaint();
     }
 
-    private JButton startButton, pauseButton, speedUpButton, slowDownButton;
+    JButton startButton;
+    JButton pauseButton;
+    JButton speedUpButton;
+    JButton slowDownButton;
 
-    private JTextField simulationTimeTextField;
-    private JLabel totalCustomerServiced;
+    JTextField simulationTimeTextField;
+    JLabel totalCustomerServiced;
 
     private JPanel totalCustomersServicedPanel, simulationCurrentTimePanel,totalServiceAvgTimePanel;
 
-    private JLabel simulationCurrentTime, totalServiceAvgTime;
+    JLabel simulationCurrentTime;
+    JLabel totalServiceAvgTime;
 
     private JLabel speedLabel;
 
