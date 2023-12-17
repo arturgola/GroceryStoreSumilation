@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import java.util.ArrayList;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -17,22 +19,26 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import controller.Controller;
 
+/**
+ * Class for View that renders and controls the GUI.
+ */
 public class View extends JFrame {
 
     ArrayList<double[]> dataSet = new ArrayList<>();
 
     private JPanel mainPanel;
 
-    JPanel distributionPanel;
+    private JPanel distributionPanel;
 
 
     private static double[][] arrayListTo2DArray(ArrayList<double[]> arrayList) {
         if (!arrayList.isEmpty()) {
             int numRows = arrayList.size();
-            int numCols = arrayList.getFirst().length;
+            int numCols = arrayList.getFirst().length; // Assuming all arrays in the list have the same length
             double[][] resultArray = new double[numCols][numRows];
 
             for (int i = 0; i < numRows; i++) {
+                // Each double array in the ArrayList is a row in the 2D array
                 double[] rowArray = arrayList.get(i);
 
                 for (int j = 0; j < numCols; j++) {
@@ -43,32 +49,32 @@ public class View extends JFrame {
             return resultArray;
         }
 
+        // Handle the case where the ArrayList is empty
         return null;
     }
 
-    private void updateDistributionPanel() {
 
+    private void updateDistributionPanel() {
+        // Access the existing chart from the ChartPanel
         JFreeChart chart = ((ChartPanel) distributionPanel.getComponent(0)).getChart();
 
+        // Update the dataset of the existing chart
         CategoryDataset newDataset = createDataset(dataSet.getLast());
         ((CategoryPlot) chart.getPlot()).setDataset(newDataset);
 
+        // Repaint the UI
         distributionPanel.revalidate();
         distributionPanel.repaint();
     }
 
-    JButton startButton;
-    JButton pauseButton;
-    JButton speedUpButton;
-    JButton slowDownButton;
+    private JButton startButton, pauseButton, speedUpButton, slowDownButton;
 
-    JTextField simulationTimeTextField;
-    JLabel totalCustomerServiced;
+    private JTextField simulationTimeTextField;
+    private JLabel totalCustomerServiced;
 
     private JPanel totalCustomersServicedPanel, simulationCurrentTimePanel,totalServiceAvgTimePanel;
 
-    JLabel simulationCurrentTime;
-    JLabel totalServiceAvgTime;
+    private JLabel simulationCurrentTime, totalServiceAvgTime;
 
     private JLabel speedLabel;
 
@@ -99,7 +105,7 @@ public class View extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         simulationTimeTextField = new JTextField();
-        simulationTimeTextField.setPreferredSize(new Dimension(100, 25));
+        simulationTimeTextField.setPreferredSize(new Dimension(100, 25)); // Adjusted width
         registerNumericKeyListener(simulationTimeTextField);
 
 
@@ -131,9 +137,14 @@ public class View extends JFrame {
         buttonsPanel.add(speedUpButton);
         buttonsPanel.add(slowDownButton);
 
+        // Add components to the layout
+
+        // Create a panel to hold the label and simulationTimeTextField using FlowLayout
         JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.add(new JLabel("Enter simulation time:"));
         inputPanel.add(simulationTimeTextField);
+
+
 
         simulationCurrentTimePanel = new JPanel(new FlowLayout());
         simulationCurrentTimePanel.add(new JLabel("Current simulation time:"));
@@ -150,9 +161,13 @@ public class View extends JFrame {
         totalServiceAvgTimePanel.add(totalServiceAvgTime);
         totalServiceAvgTimePanel.setVisible(false);
 
+
+
+
+        // Create a main panel with BoxLayout (vertical) to hold the inputPanel and start button
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(Box.createVerticalGlue());
+        mainPanel.add(Box.createVerticalGlue()); // Add glue to push components to the bottom
         mainPanel.add(inputPanel);
         mainPanel.add(simulationCurrentTimePanel);
         mainPanel.add(totalCustomersServicedPanel);
@@ -164,6 +179,8 @@ public class View extends JFrame {
         speedLabel.setPreferredSize(new Dimension(150, 25));
         mainPanel.add(speedLabel);
 
+
+        // Add the main panel to the layout
         add(mainPanel, BorderLayout.CENTER);
 
     }
@@ -172,6 +189,7 @@ public class View extends JFrame {
         textField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
+                // Allow only numeric input
                 if (!Character.isDigit(e.getKeyChar())) {
                     e.consume();
 
@@ -181,10 +199,12 @@ public class View extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                // Unused method
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
+                // Unused method
                 updateStartButtonState();
 
 
@@ -201,8 +221,12 @@ public class View extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Button clicked on EDT? " + SwingUtilities.isEventDispatchThread());
+                //controller.reset();
 
+                // Notify the controller to start the simulation
                 controller.setEngineSimulationTime(Double.parseDouble(simulationTimeTextField.getText()));
+
+
 
                 simulationCurrentTimePanel.setVisible(true);
                 totalCustomersServicedPanel.setVisible(true);
@@ -210,11 +234,13 @@ public class View extends JFrame {
 
                 distributionPanel.setVisible(true);
 
+
                 startButton.setEnabled(false);
                 pauseButton.setEnabled(true);
                 speedUpButton.setEnabled(true);
                 slowDownButton.setEnabled(true);
 
+                // Run the engine on a separate thread
                 SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                     @Override
                     protected Void doInBackground() throws Exception {
@@ -225,6 +251,7 @@ public class View extends JFrame {
                     }
                 };
 
+                // Execute the worker on a background thread
                 worker.execute();
             }
         });
@@ -234,7 +261,7 @@ public class View extends JFrame {
         speedUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                // Increase the delay factor (speed up the simulation)
                 controller.setDelay(Math.min((controller.getDelay() + 0.5), 2));
                 updateSpeedLabel();
             }
@@ -245,7 +272,7 @@ public class View extends JFrame {
         slowDownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                // Decrease the delay factor (slow down the simulation)
                 controller.setDelay(Math.max((controller.getDelay() - 0.5), 0.5));
                 updateSpeedLabel();
             }
@@ -253,7 +280,7 @@ public class View extends JFrame {
     }
 
     private void updateSpeedLabel() {
-
+        // Update the speed label with the current delay factor
         speedLabel.setText("Speed: " + controller.getDelay() + "x");
     }
 
@@ -282,9 +309,11 @@ public class View extends JFrame {
                 simulationCurrentTime.setText(String.format("%.2f", time));
             }
         });
+//        simulationCurrentTime.setText(String.format("%.2f", time));
     }
 
     public void updateServicedCustomers(int customersServiced){
+//        totalCustomerServiced.setText((String.valueOf(customersServiced)));
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -300,9 +329,11 @@ public class View extends JFrame {
                 totalServiceAvgTime.setText(String.format("%.2f", time));
             }
         });
+//        totalServiceAvgTime.setText(String.format("%.2f",time));
     }
 
     public void pushDataToPoint(double[] newData) {
+//        dataSet.remove(dataSet.size()-1);
         dataSet.add(newData);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -310,26 +341,32 @@ public class View extends JFrame {
                 updateDistributionPanel();
             }
         });
+//        dataSet.add(newData);
+//        updateDistributionPanel();
     }
 
     private JPanel createDistributionPanel(double[] data) {
         JPanel panel = new JPanel(new BorderLayout());
 
+        // Create a dataset
         CategoryDataset dataset = createDataset(data);
 
+        // Create a bar chart
         JFreeChart chart = ChartFactory.createBarChart(
-                "Average Time Distribution",
-                "",
-                "Average Time",
+                "Average Time Distribution", // Chart title
+                "", // X-axis label
+                "Average Time", // Y-axis label
                 dataset
         );
 
+        // Customize the chart
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // Rotate x-axis labels for better visibility
 
+        // Create a chart panel and add it to the distribution panel
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(400, 200));
+        chartPanel.setPreferredSize(new java.awt.Dimension(400, 200)); // Adjust size as needed
 
         panel.add(chartPanel, BorderLayout.CENTER);
         return panel;
@@ -338,9 +375,10 @@ public class View extends JFrame {
     private CategoryDataset createDataset(double[] data) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
+        // Add data to the dataset
         for (int i = 0; i < data.length; i++) {
-
-            dataset.addValue(data[i], "S" + (i + 1), "");
+//            double averageTime = calculateAverage(data[i]);
+            dataset.addValue(data[i], "S" + (i + 1), ""); // Empty string for x-axis
         }
 
         return dataset;

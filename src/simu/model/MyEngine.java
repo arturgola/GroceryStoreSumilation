@@ -12,12 +12,28 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Class for the engine model used in this particular supermarket queue simulation. It inherits the more general Engine class.
+ */
 public class MyEngine extends Engine {
-    public ArrivalProcess arrivalProcess;
-    public ServicePoint[] servicePoint;
-    public Controller controller;
+    /**
+     * Arrival process attribute for generating customer arrival events.
+     */
+    private ArrivalProcess arrivalProcess;
+    /**
+     * Array of service points used in the simulation.
+     */
+    private ServicePoint[] servicePoint;
+    /**
+     * Controller connecting Model and View.
+     */
+    private Controller controller;
 
 
+    /**
+     * Constructor for new MyEngine instance that utilizes a Controller object.
+     * @param controller
+     */
     public MyEngine(Controller controller) {
         super();
         this.controller = controller;
@@ -30,61 +46,22 @@ public class MyEngine extends Engine {
         arrivalProcess = new ArrivalProcess(new Negexp(2), eventList, EventType.ARR);
     }
 
+    /**
+     * Method to initialize the simulation by creating new event (arrival).
+     */
     protected void initialize() {
         arrivalProcess.generateNextEvent();
 
     }
 
-    public void runEvent(Event e) {
+    /**
+     * Logic for B-event processing.
+     * @param e Event object which will be processed by its attribute (time and type).
+     */
+    protected void runEvent(Event e) {
         Customer a;
 
         controller.updateTime(e.getTime());
-
-
-       /*switch ((EventType) e.getType()) {
-            case ARR:
-                servicePoint[0].addToQueue(new Customer());
-                arrivalProcess.generateNextEvent();
-                break;
-
-           case DEP1:
-                a = servicePoint[0].removeFromQueue();
-                servicePoint[1].addToQueue(a);
-                break;
-
-           case DEP2:
-               a = servicePoint[1].removeFromQueue();
-               servicePoint[2].addToQueue(a);
-               break;
-
-           case DEP3:
-               a = servicePoint[2].removeFromQueue();
-               servicePoint[3].addToQueue(a);
-               break;
-
-            case DEP4:
-                a = servicePoint[3].removeFromQueue();
-                a.setRemovalTime(Clock.getInstance().getClock());
-                controller.updateServicedCustomers(servicePoint[3].getCustomerServiced());
-
-                double totalServiceAvgTime = servicePoint[0].getMeanServiceTime() + servicePoint[1]
-                .getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
-
-
-                double[] sampleData = {
-                        servicePoint[0].getMeanServiceTime(),
-                        servicePoint[1].getMeanServiceTime(),
-                        servicePoint[2].getMeanServiceTime(),
-                        servicePoint[3].getMeanServiceTime()
-                };
-
-                controller.pushDataToPoint(sampleData);
-
-
-                controller.updateTotalServiceAvgTime(totalServiceAvgTime);
-                a.reportResults();
-                break;
-        }*/
 
         switch ((EventType) e.getType()) {
             case ARR:
@@ -121,25 +98,12 @@ public class MyEngine extends Engine {
                 updateView();
                 break;
         }
-
-//                double totalServiceAvgTime = servicePoint[0].getMeanServiceTime() + servicePoint[1]
-//                .getMeanServiceTime()+servicePoint[2].getMeanServiceTime()+servicePoint[3].getMeanServiceTime();
-
-
-        /*double[] sampleData = new double[] {
-                servicePoint[0].getMeanServiceTime(),
-                servicePoint[1].getMeanServiceTime(),
-                servicePoint[2].getMeanServiceTime(),
-                servicePoint[3].getMeanServiceTime()
-        };
-        controller.pushDataToPoint(sampleData);*/
-
-
-//                controller.updateTotalServiceAvgTime(totalServiceAvgTime);
-
     }
 
-    public void tryCEvents() {
+    /**
+     * Method for C-event processing attempt (conditional events).
+     */
+    protected void tryCEvents() {
         for (ServicePoint sp : servicePoint) {
             if (!sp.isReserved() && sp.isOnQueue()) {
                 sp.beginService();
@@ -147,11 +111,17 @@ public class MyEngine extends Engine {
         }
     }
 
+    /**
+     * @return Service point object that has the shortest queue length.
+     */
     private ServicePoint minQueueServicePoint() {
         List<ServicePoint> servicePointList = Arrays.asList(servicePoint);
         return Collections.min(servicePointList);
     }
 
+    /**
+     * @return Total number of customers serviced.
+     */
     private int getTotalCustomerServiced() {
         int total = 0;
         for (ServicePoint sp : servicePoint) {
@@ -160,6 +130,9 @@ public class MyEngine extends Engine {
         return total;
     }
 
+    /**
+     * @return Total service time during the simulation run.
+     */
     private double getTotalAvgServiceTime() {
         double total = 0;
         for (ServicePoint sp : servicePoint) {
@@ -168,6 +141,9 @@ public class MyEngine extends Engine {
         return total / servicePoint.length;
     }
 
+    /**
+     * Update content shown in GUI View.
+     */
     private void updateView() {
         double[] sampleData = new double[]{
                 servicePoint[0].getMeanServiceTime(),
@@ -186,6 +162,9 @@ public class MyEngine extends Engine {
         this.controller = controller;
     }
 
+    /**
+     * Print and update the results of the simulation run in terminal and on GUI.
+     */
     protected void results() {
         updateView();
         controller.finishSimulation(getTotalCustomerServiced());
@@ -205,6 +184,9 @@ public class MyEngine extends Engine {
         writeResults();
     }
 
+    /**
+     * Write the results of the simulation run to a .csv file.
+     */
     private void writeResults() {
         String fileName = generateFileName();
         try (FileWriter writer = new FileWriter(fileName)) {
@@ -228,6 +210,9 @@ public class MyEngine extends Engine {
         }
     }
 
+    /**
+     * @return a file name for new .csv file exported that includes current time stamp.
+     */
     private String generateFileName() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
         String dateTime = dateFormat.format(new Date());
