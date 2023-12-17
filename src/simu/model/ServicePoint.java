@@ -8,6 +8,7 @@ import simu.framework.EventList;
 import simu.model.Customer;
 
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Class for service point objects.
@@ -114,21 +115,7 @@ public class ServicePoint implements Comparable<ServicePoint> {
         return Integer.compare(this.queue.size(), otherServicePoint.queue.size());
     }
 
-    //    public void serve() {
-//        Customer a;
-//        Normal normalGenerator = new Normal(5, 1);
-//
-//        a = removeFromQueue();
-//        while (a != null) {
-//            Clock.getInstance().setClock(Clock.getInstance().getClock() + normalGenerator.sample());
-//
-//            a.setRemovalTime(Clock.getInstance().getClock());
-//            a.reportResults();
-//            System.out.println(a.getRemovalTime());
-//            System.out.println(a.getArrivalTime());
-////            serviceTimeSum += a.getRemovalTime() - a.getArrivalTime();
-//
-//            a = removeFromQueue();
-//        }
-//    }
+    public Queue<Object> getQueue() {
+        return null;
+    }
 }

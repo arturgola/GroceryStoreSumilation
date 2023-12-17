@@ -1,19 +1,15 @@
-First push.
+## Intro
 
+The objective of the group’s prject work is to develop a comprehensive simulator for a supermarket queue system, 
+specifically focusing on the customer arrival and cashier selection process. In this simulation, 
+customers arrive at the cash line and strategically choose the cashier with the least number of people waiting at 
+the time of their arrival. The primary goal is to model and analyze the dynamic interactions within the supermarket queue,
+simulating the customer flow and cashier utilization.
 
-How to run:  
-Build project with SDK, in the menu bar, select build project and use oracle SDK.  
-import jfreechart lib into project. In the menu - File, Project Structure and then choose Libraries and local jfreechart  
-run from Main (/scr/Main).   
-Insert 10000 as a simu time or more. Charts can show current time. Just point on them with pointer, make longer simu time to view better.  
-UI is located in View, Controller acts as a controller between engine and GUI.  
-Framework is a basic engine from teacher with changes.  
+### Vision
 
-# TODO
-
-We need working methods of reset, pause, speed down/up.  This changes must be done somewhere in MyEngine.java (/src/model).  
-We need documentation.  
-If there will be enough time, we need to work with improvement of GUI.  
+We think that our simulation can help to understand supermarket behaviour and it can be used for modeling this. 
+It can be improved to be more complex and then it can be more beneficial.
 
 <p align="center">
     <img src="./demo_picture.png" />

@@ -1,6 +1,5 @@
 package simu.framework;
 
-
 import simu.model.Customer;
 
 /**
@@ -10,7 +9,7 @@ public abstract class Engine {
     private static final String RED = "\033[0;31m"; // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
     private static final String WHITE = "\033[0;37m"; // ANSI escape code for white color
     private double simulationTime = 0;
-    protected EventList eventList;
+    public EventList eventList;
 
     protected double delay = 1;
 

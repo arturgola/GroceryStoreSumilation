@@ -5,9 +5,7 @@ import simu.model.MyEngine;
 import javax.swing.*;
 
 
-/**
- * Generate new instance for Model (MyEngine), View and Controller and open the application.
- */
+
 public class Main {
     public static void main(String[] args) {
         MyEngine engine = new MyEngine(null);
