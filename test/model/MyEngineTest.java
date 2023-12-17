@@ -22,10 +22,10 @@ class MyEngineTest {
 
     @Test
     void testInitialize() {
-        assertNotNull(myEngine.arrivalProcess);
-        assertNotNull(myEngine.servicePoint);
-        assertNotNull(myEngine.controller);
-        assertNotNull(myEngine.eventList);
+        assertNotNull(myEngine.getArrivalProcess());
+        assertNotNull(myEngine.getServicePoint());
+        assertNotNull(myEngine.getController());
+        assertNotNull(myEngine.getEventList());
     }
 
     @Test

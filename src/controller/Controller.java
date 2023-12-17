@@ -20,6 +20,10 @@ public class Controller {
         initView();
     }
 
+    public Controller() {
+
+    }
+
     public void setView(View view) {
         this.view = view;
     }

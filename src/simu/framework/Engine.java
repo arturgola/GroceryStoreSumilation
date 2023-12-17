@@ -111,6 +111,10 @@ public abstract class Engine {
         }
     }
 
+    public EventList getEventList() {
+        return eventList;
+    }
+
     protected abstract void initialize();
     protected abstract void runEvent(Event e);
     protected abstract void tryCEvents();

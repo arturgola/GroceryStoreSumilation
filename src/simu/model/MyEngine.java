@@ -130,6 +130,19 @@ public class MyEngine extends Engine {
         return total;
     }
 
+    public ArrivalProcess getArrivalProcess() {
+        return arrivalProcess;
+    }
+
+    public ServicePoint[] getServicePoint() {
+        return servicePoint;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+
     /**
      * @return Total service time during the simulation run.
      */
