@@ -19,11 +19,9 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import controller.Controller;
 
-
-// this class renders and controls UI
-
-
-// View
+/**
+ * Class for View that renders and controls the GUI.
+ */
 public class View extends JFrame {
 
     ArrayList<double[]> dataSet = new ArrayList<>();

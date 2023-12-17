@@ -1,11 +1,15 @@
+/**
+ * Controller package
+ */
 package controller;
 
 import simu.model.MyEngine;
 import view.View;
 
+/**
+ * Class for Controller connecting Model and View
+ */
 public class Controller {
-
-
     private MyEngine engine;
     private View view;
 

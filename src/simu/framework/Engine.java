@@ -3,6 +3,9 @@ package simu.framework;
 
 import simu.model.Customer;
 
+/**
+ * Engine class with abstract methods for implementing event processing.
+ */
 public abstract class Engine {
     private static final String RED = "\033[0;31m"; // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
     private static final String WHITE = "\033[0;37m"; // ANSI escape code for white color
@@ -13,11 +16,18 @@ public abstract class Engine {
 
     protected boolean isPaused = false;
 
+    /**
+     * Engine instance constructor. Create event list that is used during the entire time of simulation.
+     */
     public Engine() {
         eventList = new EventList();
         // Service Points are created in the subclass
     }
 
+    /**
+     * Set the duration of the simulation.
+     * @param simulationTime duration that the simulation runs.
+     */
     public void setSimulationTime(double simulationTime) {
         Clock.getInstance().setClock(0);
         Customer.resetI();
@@ -41,6 +51,9 @@ public abstract class Engine {
         isPaused = !isPaused;
     }
 
+    /**
+     * Main loop of the simulation.
+     */
     public void run() {
         initialize();
 
@@ -73,14 +86,25 @@ public abstract class Engine {
         results();
     }
 
+    /**
+     * Check if simulation should still be running.
+     * @return Return boolean value if the application is still running.
+     */
     private boolean simulate() {
         return Clock.getInstance().getClock() < simulationTime;
     }
 
+    /**
+     * Get the time of the next event on the event list to be set as the new current time.
+     * @return time of next event on the event list.
+     */
     private double currentTime() {
         return eventList.getNextEventTime();
     }
 
+    /**
+     * Process next event on the event list.
+     */
     private void runBEvents() {
         while (eventList.getNextEventTime() == Clock.getInstance().getClock()) {
             runEvent(eventList.remove());

@@ -5,18 +5,30 @@ import eduni.distributions.Negexp;
 import simu.model.EventType;
 
 
-/* to add arrival events to the event list */
+/**
+ * Generate new arrival events into the event list.
+ */
 public class ArrivalProcess {
     private ContinuousGenerator generator;
     private EventList eventList;
     private IEventType type;
 
+    /**
+     * Create new instance of the class
+     * @param g random number generator
+     * @param tl event list
+     * @param type type of event generated (arrival)
+     */
     public ArrivalProcess(ContinuousGenerator g, EventList tl, IEventType type) {
         this.generator = g;
         this.eventList = tl;
         this.type = type;
     }
 
+    /**
+     * Create new event into the event list. New event has a type and time for the event to happen.
+     * @return time of event created.
+     */
     public double generateNextEvent() {
         double eventTime = Clock.getInstance().getClock() + generator.sample();
         Event t = new Event(type, eventTime);

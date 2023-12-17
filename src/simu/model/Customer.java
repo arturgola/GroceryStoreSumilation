@@ -2,6 +2,9 @@ package simu.model;
 
 import simu.framework.Clock;
 
+/**
+ * Class for customer objects.
+ */
 public class Customer {
     private static final String YELLOW = "\033[0;33m";
     private static final String WHITE = "\033[0;37m";
@@ -11,6 +14,9 @@ public class Customer {
     private int id;
     private static int i = 1;
 
+    /**
+     * Customer class instance constructor. Customer object's id and arrival time are created.
+     */
     public Customer() {
         id = i++;
 
@@ -26,6 +32,10 @@ public class Customer {
         return removalTime;
     }
 
+    /**
+     * Set the time the customer leaves the service point.
+     * @param removalTime value of the time of customer removal.
+     */
     public void setRemovalTime(double removalTime) {
         this.removalTime = removalTime;
     }
@@ -42,6 +52,9 @@ public class Customer {
         Customer.serviceTimeSum = 0;
     }
 
+    /**
+     * Print the results after the customer has been serviced.
+     */
     public void reportResults() {
         serviceTimeSum += (removalTime - arrivalTime);
         double meanServiceTime = serviceTimeSum / id;   // id is the number of customers serviced
